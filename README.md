@@ -10,9 +10,10 @@ visualizzatore 3D con sezioni (smalto, dentina, polpa, cemento) e vista dei cana
    (circa 18 MB); quando in fondo alla pagina compare "disponibile offline" funziona anche senza rete.
 
 ## Aggiornamenti
-Quando viene pubblicata una nuova versione, l'app mostra "Nuova versione disponibile" → **Aggiorna**.
+Le nuove versioni si installano da sole: basta aprire l'app con la rete attiva (al massimo serve chiuderla e riaprirla una volta).
+Immagini e modelli 3D già scaricati non vengono riscaricati.
 
 ## Contenuti e licenze
 Modelli e rendering: generati proceduralmente, valori medi da Wheeler's Dental Anatomy (Nelson, 11ª ed.).
 three.js r128 (MIT, vedi `vendor/three-LICENSE.txt`). Font Archivo, Source Sans 3, IBM Plex Mono (SIL OFL, vedi `fonts/`).
-Versione 1.1.0.
+Versione 1.2.0.

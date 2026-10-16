@@ -459,10 +459,10 @@ dialog.v3d { overscroll-behavior: contain; }
     </div>
     <p><b>Come sono fatti.</b> Modelli anatomici idealizzati, costruiti proceduralmente a partire dalla morfologia descritta nei testi di riferimento e resi con illuminazione fisica dello smalto (riflessione speculare, occlusione ambientale, pigmentazione dei solchi). Non sono scansioni di denti reali: forma, numero di cuspidi e pattern dei solchi variano tra individui, soprattutto per terzi molari e premolari inferiori.</p>
     <p><b>Note di tecnica.</b> I suggerimenti per le ricostruzioni dirette riassumono concetti di stratificazione anatomica diffusi nella letteratura clinica (case report, consensus di esperti): non derivano da studi comparativi e vanno letti come indicazioni operative.</p>
-    <p class="app-status" id="app-status"></p>
     <p><b>Riferimento dimensionale.</b> Nelson SJ. <i>Wheeler's Dental Anatomy, Physiology and Occlusion</i>, 11ª ed. Elsevier, 2020 (valori medi della corona). Livello di evidenza delle note: anatomia consolidata.</p>
     </div>
    </details>
+   <p class="app-status" id="app-status"></p>
   </footer>
 </div>
 
@@ -624,36 +624,45 @@ dialog.v3d { overscroll-behavior: contain; }
 <script>
 window.M3D_FORMAT = 'bin';
 (function () {
-  const VERSION = '1.1.0';
+  const VERSION = '1.2.0';
+  const SHELL = 'atlante-shell-' + VERSION;
+  const t0 = Date.now();
   const st = document.getElementById('app-status');
   const say = t => { if (st) st.textContent = 'Versione ' + VERSION + ' · ' + t; };
   if (!('serviceWorker' in navigator)) { say('uso offline non disponibile su questo browser'); return; }
-  say('preparazione per l\'uso offline…');
-  navigator.serviceWorker.register('sw.js').then(reg => {
-    const check = () => caches.has('atlante-' + VERSION).then(ok => {
-      if (ok && navigator.serviceWorker.controller) say('disponibile offline');
-    });
-    navigator.serviceWorker.addEventListener('message', e => {
-      if (e.data && e.data.type === 'cached') say('disponibile offline');
-    });
-    check(); setTimeout(check, 4000);
-    reg.addEventListener('updatefound', () => {
-      const w = reg.installing;
-      if (!w) return;
-      w.addEventListener('statechange', () => {
-        if (w.state === 'installed' && navigator.serviceWorker.controller) showUpdate(w);
-      });
-    });
-  }).catch(() => say('uso offline non attivo'));
-  let reloading = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => { if (reloading) location.reload(); });
-  function showUpdate(w) {
+  say('preparazione per l’uso offline…');
+  const check = () => caches.has(SHELL).then(ok => { if (ok) say('disponibile offline'); }).catch(() => {});
+  navigator.serviceWorker.addEventListener('message', e => {
+    if (e.data && (e.data.type === 'cached' || e.data.type === 'activated')) check();
+  });
+  // a new service worker took over: reload right away if the app was just opened, otherwise offer it
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    check();
+    if (reloaded) return;
+    if (Date.now() - t0 < 20000 || document.visibilityState !== 'visible') { reloaded = true; location.reload(); }
+    else showReload();
+  });
+  function showReload() {
+    if (document.querySelector('.app-banner')) return;
     const b = document.createElement('div');
     b.className = 'app-banner';
-    b.innerHTML = '<span>Nuova versione disponibile</span><button type="button">Aggiorna</button>';
-    b.querySelector('button').addEventListener('click', () => { reloading = true; w.postMessage({ type: 'skip' }); });
+    b.innerHTML = '<span>Aggiornamento installato</span><button type="button">Ricarica</button>';
+    b.querySelector('button').addEventListener('click', () => { reloaded = true; location.reload(); });
     document.body.appendChild(b);
   }
+  navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => {
+    if (reg.waiting) reg.waiting.postMessage({ type: 'skip' });
+    reg.addEventListener('updatefound', () => {
+      const w = reg.installing;
+      if (w) w.addEventListener('statechange', () => { if (w.state === 'installed') w.postMessage({ type: 'skip' }); });
+    });
+    let last = Date.now();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && Date.now() - last > 60000) { last = Date.now(); reg.update().catch(() => {}); }
+    });
+    check(); setTimeout(check, 5000); setTimeout(check, 20000);
+  }).catch(() => say('uso offline non attivo'));
 })();
 </script>
 <script src="vendor/three.min.js"></script>
