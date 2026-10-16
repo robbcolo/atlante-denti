@@ -136,6 +136,7 @@ dialog#viewer {
   border: 1px solid var(--line); border-radius: 14px; padding: 0; background: var(--surface); color: var(--ink);
   width: min(1160px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto;
 }
+dialog#viewer:focus, dialog.v3d:focus { outline: none; }
 dialog#viewer::backdrop { background: rgba(10, 14, 13, 0.62); }
 .vgrid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); }
 .vfig { background: var(--sunken); padding: 22px; display: grid; gap: 12px; align-content: start; min-width: 0; }
@@ -287,10 +288,92 @@ dialog.v3d::backdrop { background: rgba(8, 10, 12, 0.7); }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .vnum { font-size: 34px; } .vname { font-size: 22px; }
 }
-.floatclose { display: none; }
-@media (max-width: 860px) {
-  .floatclose { display: block; position: sticky; top: 10px; margin: 10px 10px -46px auto; z-index: 3; box-shadow: 0 2px 8px var(--shadow); }
+
+
+/* ---------- shared additions ---------- */
+.iconbtn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.iconbtn.primary:hover { opacity: .9; }
+.archsw { display: none; }
+.tbitem { display: inline-flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; }
+.vbar { display: none; }
+.v3-seg .sm { display: none; }
+details.notes > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+details.notes > summary::-webkit-details-marker { display: none; }
+details.notes > summary::after { content: '▾'; font-size: 12px; color: var(--muted); transition: transform .15s; }
+details.notes:not([open]) > summary::after { transform: rotate(-90deg); }
+details.notes > ul { margin-top: 8px; }
+details.about > summary { cursor: pointer; font: 600 14px var(--f-body); color: var(--ink); list-style: none; display: flex; align-items: center; gap: 8px; }
+details.about > summary::-webkit-details-marker { display: none; }
+details.about > summary::after { content: '▾'; font-size: 12px; color: var(--muted); }
+details.about:not([open]) > summary::after { transform: rotate(-90deg); }
+.about-body { display: grid; gap: 8px; margin-top: 10px; }
+.about-facts { display: none; }
+
+/* ---------- iPhone ---------- */
+@media (max-width: 600px) {
+  body { padding-block: 14px 28px; }
+  .wrap { gap: 18px; }
+  header.top { gap: 10px; }
+  header.top .eyebrow, header.top .lede, header.top .facts { display: none; }
+  h1 { font-size: 27px; }
+  .open3d { width: 100%; height: 46px; font-size: 15px; justify-content: center; border-radius: 12px; }
+  .archsw { display: flex; width: 100%; border-radius: 12px; padding: 3px; }
+  .archsw button { flex: 1; padding: 10px 8px; border-radius: 9px; font-size: 14px; }
+  .arches { gap: 0; }
+  body[data-arch="sup"] .plate[data-arch="inf"], body[data-arch="inf"] .plate[data-arch="sup"] { display: none; }
+  .plate { padding: 10px 10px 8px; border-radius: 14px; }
+  .plate-head { display: none; }
+  .side-note { font-size: 10.5px; }
+  .toolbar { gap: 8px; }
+  .tb-group, .tb-scale { display: none; }
+  .tb-view { width: 100%; }
+  .tb-view .toollabel { display: none; }
+  .tb-view .seg { width: 100%; border-radius: 12px; }
+  .tb-view .seg button { flex: 1; padding: 10px 8px; border-radius: 9px; font-size: 14px; }
+  #quads { gap: 18px !important; }
+  body[data-arch="sup"] .quad[data-arch="inf"], body[data-arch="inf"] .quad[data-arch="sup"] { display: none; }
+  .quad { gap: 10px; }
+  .quad-head { padding-bottom: 6px; }
+  .quad-head h2 { font-size: 16px; }
+  .quad-head .qn { font-size: 11.5px; }
+  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .card { padding: 5px 5px 7px; gap: 4px; border-radius: 12px; justify-items: center; text-align: center; }
+  .card:hover { transform: none; }
+  .card .media { border-radius: 9px; width: 100%; }
+  .card .nm, .card .dim { display: none; }
+  .card .num { font-size: 14px; }
+  footer { font-size: 13px; }
+  .about-facts { display: flex; font-size: 11.5px; }
+
+  /* tooth sheet: full screen with an app bar */
+  dialog#viewer { width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; margin: 0; inset: 0; border: 0; border-radius: 0; }
+  .vbar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 8px; align-items: center; position: sticky; top: 0; z-index: 5;
+    background: var(--surface); border-bottom: 1px solid var(--line);
+    padding-top: max(10px, env(safe-area-inset-top, 0px)); padding-bottom: 10px;
+    padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); }
+  .vbar-t { display: grid; min-width: 0; line-height: 1.15; }
+  .vbar-n { font: 600 18px var(--f-mono); }
+  .vbar-name { font: 700 14px var(--f-display); font-stretch: 85%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); }
+  .vhead, .vfoot { display: none !important; }
+  .vfig { padding: 12px 12px 14px; gap: 10px; }
+  .vswitch { width: 100%; border-radius: 12px; }
+  .vswitch button { flex: 1; padding: 9px 6px; border-radius: 9px; }
+  .compass { grid-template-columns: 16px minmax(0, 1fr) 16px; grid-template-rows: 16px auto 16px; }
+  .compass .cl { font-size: 10.5px; }
+  .kinds { gap: 4px 12px; font-size: 12px; }
+  .vside { padding: 14px 14px max(24px, env(safe-area-inset-bottom, 0px)); gap: 14px; }
+  .specs dd { font-size: 14px; }
+  ol.legend li { font-size: 14px; padding: 3px 4px; }
+
+  /* 3D viewer */
+  .v3-seg .lg { display: none; }
+  .v3-seg .sm { display: inline; }
+  #v3-views button[data-v] { min-width: 40px; font: 600 14px var(--f-mono); padding: 8px 0; }
+  .v3-body { grid-template-rows: 62dvh auto; }
+  .v3-head h2 { font-size: 17px; }
+  .v3-eyebrow { display: none; }
 }
+
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 <style>
@@ -298,7 +381,7 @@ dialog.v3d::backdrop { background: rgba(8, 10, 12, 0.7); }
 html { -webkit-tap-highlight-color: transparent; }
 button, [role="button"], .card, .hot, #v3-odo .t { touch-action: manipulation; }
 img, .media, .archfig, .bigfig, .v3-stage { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
-dialog#viewer { top: env(safe-area-inset-top, 0px); bottom: env(safe-area-inset-bottom, 0px); max-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); }
+@media (min-width: 601px) { dialog#viewer { top: env(safe-area-inset-top, 0px); bottom: env(safe-area-inset-bottom, 0px); max-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); } }
 dialog.v3d { overscroll-behavior: contain; }
 .v3-ctl { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .app-status { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
@@ -320,16 +403,21 @@ dialog.v3d { overscroll-behavior: contain; }
       <span><b>Orientamento</b> lato destro del paziente a sinistra</span>
       <span><b>Vista vestibolare</b> come in bocca: superiori con il bordo incisale in basso</span>
     </div>
-    <div><button class="iconbtn open3d" id="open3d" type="button">Apri il visualizzatore 3D</button></div>
+    <div><button class="iconbtn open3d primary" id="open3d" type="button">Apri il visualizzatore 3D</button></div>
   </header>
 
+  <div class="seg archsw" id="archsw" role="group" aria-label="Arcata">
+    <button type="button" aria-pressed="true" data-a="sup">Arcata superiore</button>
+    <button type="button" aria-pressed="false" data-a="inf">Arcata inferiore</button>
+  </div>
+
   <section class="arches" aria-label="Arcate">
-    <div class="plate">
+    <div class="plate" data-arch="sup">
       <div class="plate-head"><h2>Arcata superiore</h2><span class="eyebrow">Vista occlusale dal basso</span></div>
       <figure class="archfig" id="arch-sup"></figure>
       <div class="side-note"><span>← destra paziente (Q1)</span><span>sinistra paziente (Q2) →</span></div>
     </div>
-    <div class="plate">
+    <div class="plate" data-arch="inf">
       <div class="plate-head"><h2>Arcata inferiore</h2><span class="eyebrow">Vista occlusale dall'alto</span></div>
       <figure class="archfig" id="arch-inf"></figure>
       <div class="side-note"><span>← destra paziente (Q4)</span><span>sinistra paziente (Q3) →</span></div>
@@ -337,43 +425,60 @@ dialog.v3d { overscroll-behavior: contain; }
   </section>
 
   <div class="toolbar">
-    <span class="toollabel">Vista</span>
+    <span class="tbitem tb-view"><span class="toollabel">Vista</span>
     <div class="seg" id="view" role="group" aria-label="Vista delle schede">
       <button type="button" aria-pressed="true" data-v="occ">Occlusale</button>
       <button type="button" aria-pressed="false" data-v="fac">Vestibolare</button>
-    </div>
-    <span class="toollabel">Gruppo</span>
+    </div></span>
+    <span class="tbitem tb-group"><span class="toollabel">Gruppo</span>
     <div class="seg" id="filter" role="group" aria-label="Filtra per gruppo">
       <button type="button" aria-pressed="true" data-g="">Tutti</button>
       <button type="button" aria-pressed="false" data-g="Incisivi">Incisivi</button>
       <button type="button" aria-pressed="false" data-g="Canini">Canini</button>
       <button type="button" aria-pressed="false" data-g="Premolari">Premolari</button>
       <button type="button" aria-pressed="false" data-g="Molari">Molari</button>
-    </div>
-    <span class="toollabel">Scala</span>
+    </div></span>
+    <span class="tbitem tb-scale"><span class="toollabel">Scala</span>
     <div class="seg" id="scale" role="group" aria-label="Scala delle schede">
       <button type="button" aria-pressed="true" data-s="real">Reale</button>
       <button type="button" aria-pressed="false" data-s="fit">Adattata</button>
-    </div>
+    </div></span>
   </div>
 
   <div id="quads" class="wrap" style="gap:34px"></div>
 
   <footer>
+   <details class="about" id="about" open>
+    <summary>Informazioni e fonti</summary>
+    <div class="about-body">
+    <div class="facts about-facts">
+      <span><b>Numerazione</b> FDI</span>
+      <span><b>Dimensioni</b> medie Wheeler (MD × VL, mm)</span>
+      <span><b>Orientamento</b> lato destro del paziente a sinistra</span>
+      <span><b>Vista vestibolare</b> come in bocca</span>
+    </div>
     <p><b>Come sono fatti.</b> Modelli anatomici idealizzati, costruiti proceduralmente a partire dalla morfologia descritta nei testi di riferimento e resi con illuminazione fisica dello smalto (riflessione speculare, occlusione ambientale, pigmentazione dei solchi). Non sono scansioni di denti reali: forma, numero di cuspidi e pattern dei solchi variano tra individui, soprattutto per terzi molari e premolari inferiori.</p>
     <p><b>Note di tecnica.</b> I suggerimenti per le ricostruzioni dirette riassumono concetti di stratificazione anatomica diffusi nella letteratura clinica (case report, consensus di esperti): non derivano da studi comparativi e vanno letti come indicazioni operative.</p>
     <p class="app-status" id="app-status"></p>
     <p><b>Riferimento dimensionale.</b> Nelson SJ. <i>Wheeler's Dental Anatomy, Physiology and Occlusion</i>, 11ª ed. Elsevier, 2020 (valori medi della corona). Livello di evidenza delle note: anatomia consolidata.</p>
+    </div>
+   </details>
   </footer>
 </div>
 
-<dialog id="viewer" aria-labelledby="v-name">
-  <button class="iconbtn floatclose" id="v-close2" type="button" aria-label="Chiudi">✕</button>
+<dialog id="viewer" aria-labelledby="v-name" tabindex="-1">
+  <div class="vbar">
+    <button class="iconbtn" id="v-close2" type="button" aria-label="Chiudi">✕</button>
+    <div class="vbar-t"><span class="vbar-n" id="vb-num"></span><span class="vbar-name" id="vb-name"></span></div>
+    <button class="iconbtn" id="vb-prev" type="button" aria-label="Dente precedente">‹</button>
+    <button class="iconbtn" id="vb-next" type="button" aria-label="Dente successivo">›</button>
+  </div>
   <div class="vgrid">
     <div class="vfig">
       <div class="seg vswitch" id="vview" role="group" aria-label="Vista della tavola">
         <button type="button" aria-pressed="true" data-v="occ">Occlusale</button>
         <button type="button" aria-pressed="false" data-v="fac">Vestibolare</button>
+        <button type="button" aria-pressed="false" data-v="3d">3D</button>
       </div>
       <div class="compass">
         <span class="cl cn" id="c-n"></span>
@@ -391,7 +496,7 @@ dialog.v3d { overscroll-behavior: contain; }
       </div>
     </div>
     <div class="vside">
-      <div class="vtop">
+      <div class="vtop vhead">
         <div style="display:grid;gap:6px">
           <span class="vnum" id="v-num"></span>
           <span class="vname" id="v-name"></span>
@@ -404,15 +509,15 @@ dialog.v3d { overscroll-behavior: contain; }
         <label class="chk"><input type="checkbox" id="t-schema" checked> Schema solchi e creste</label>
       </div>
       <ol class="legend" id="v-legend"></ol>
-      <div class="notes">
-        <span class="tier">Anatomia consolidata</span>
+      <details class="notes" id="v-anat-d" open>
+        <summary><span class="tier">Anatomia consolidata</span></summary>
         <ul id="v-notes"></ul>
-      </div>
-      <div class="notes" id="v-tech-wrap" hidden>
-        <span class="tier tech">Tecnica clinica · opinione di esperti</span>
+      </details>
+      <details class="notes" id="v-tech-wrap" open hidden>
+        <summary><span class="tier tech">Tecnica clinica · opinione di esperti</span></summary>
         <ul id="v-tech"></ul>
-      </div>
-      <div class="vtop" style="align-items:center">
+      </details>
+      <div class="vtop vfoot" style="align-items:center">
         <span class="src" id="v-hint">Frecce ← → per scorrere i denti</span>
         <div class="vnav">
           <button class="iconbtn" id="v-3d" type="button">3D e sezioni</button>
@@ -424,7 +529,7 @@ dialog.v3d { overscroll-behavior: contain; }
   </div>
 </dialog>
 
-<dialog id="v3d" class="v3d" aria-labelledby="v3-title">
+<dialog id="v3d" class="v3d" aria-labelledby="v3-title" tabindex="-1">
   <div class="v3-shell">
     <header class="v3-head">
       <button class="v3-btn" id="v3-close" type="button" aria-label="Chiudi il visualizzatore">←</button>
@@ -448,8 +553,8 @@ dialog.v3d { overscroll-behavior: contain; }
         <div class="v3-loading" id="v3-loading" hidden>Caricamento del modello…</div>
         <div class="v3-ctl">
           <div class="v3-seg" id="v3-orient" role="group" aria-label="Orientamento">
-            <button type="button" aria-pressed="true" data-o="mouth">Come in bocca</button>
-            <button type="button" aria-pressed="false" data-o="up">Corona in alto</button>
+            <button type="button" aria-pressed="true" data-o="mouth"><span class="lg">Come in bocca</span><span class="sm">In bocca</span></button>
+            <button type="button" aria-pressed="false" data-o="up"><span class="lg">Corona in alto</span><span class="sm">Corona su</span></button>
           </div>
           <div class="v3-seg" id="v3-views" role="group" aria-label="Viste">
             <button type="button" aria-pressed="true" data-v="B">Vestibolare</button>
@@ -519,7 +624,7 @@ dialog.v3d { overscroll-behavior: contain; }
 <script>
 window.M3D_FORMAT = 'bin';
 (function () {
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
   const st = document.getElementById('app-status');
   const say = t => { if (st) st.textContent = 'Versione ' + VERSION + ' · ' + t; };
   if (!('serviceWorker' in navigator)) { say('uso offline non disponibile su questo browser'); return; }
@@ -1132,7 +1237,11 @@ const V3 = (() => {
     $('v3-title').textContent = `${st.fdi} · ${ty.name.replace(/ (superiore|inferiore)$/, '')} ${QN[quad(st.fdi)]}`;
     const up = isUpper(st.fdi), ant = ty.view === 'incisale';
     const lab = { B: 'Vestibolare', L: up ? 'Palatale' : 'Linguale', M: 'Mesiale', D: 'Distale', O: ant ? 'Incisale' : 'Occlusale' };
-    document.querySelectorAll('#v3-views button[data-v]').forEach(b => { b.textContent = lab[b.dataset.v]; });
+    const short = { B: 'V', L: up ? 'P' : 'L', M: 'M', D: 'D', O: ant ? 'I' : 'O' };
+    document.querySelectorAll('#v3-views button[data-v]').forEach(b => {
+      b.innerHTML = `<span class="lg">${lab[b.dataset.v]}</span><span class="sm">${short[b.dataset.v]}</span>`;
+      b.setAttribute('aria-label', lab[b.dataset.v]); b.title = lab[b.dataset.v];
+    });
     $('v3-orient').hidden = !up;
     document.querySelectorAll('#v3-orient button').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.o === 'up') === st.crownUp)));
     document.querySelectorAll('#v3-odo .t').forEach(p => p.classList.toggle('on', +p.dataset.fdi === st.fdi));
@@ -1264,7 +1373,7 @@ const V3 = (() => {
   function open(fdi, opts = {}) {
     wire();
     const dlg = $('v3d');
-    if (!dlg.open) { try { dlg.showModal(); } catch (e) { dlg.setAttribute('open', ''); } }
+    if (!dlg.open) { try { dlg.showModal(); } catch (e) { dlg.setAttribute('open', ''); } dlg.focus({ preventScroll: true }); }
     if (!inited && !init()) {
       $('v3-loading').hidden = false;
       $('v3-loading').textContent = fail;
@@ -1331,7 +1440,7 @@ function dataFor(fdi, view) { return view === 'fac' ? META.fac.teeth[fdi] : META
 function buildQuads() {
   const host = document.getElementById('quads');
   for (const Q of QUADS) {
-    const sec = el('section', { class: 'quad', 'aria-labelledby': 'q' + Q.q }, host);
+    const sec = el('section', { class: 'quad', 'data-arch': Q.q <= 2 ? 'sup' : 'inf', 'aria-labelledby': 'q' + Q.q }, host);
     const head = el('div', { class: 'quad-head' }, sec);
     el('h2', { id: 'q' + Q.q, text: Q.title }, head);
     el('span', { class: 'qn', text: `Quadrante ${Q.q} · ${Q.ids[0]}–${Q.ids[7]}` }, head);
@@ -1386,7 +1495,7 @@ function wireSeg(id, fn) {
 function setSeg(id, bOrVal) {
   const seg = document.getElementById(id);
   seg.querySelectorAll('button').forEach(x => {
-    const on = typeof bOrVal === 'string' ? (x.dataset.v === bOrVal) : (x === bOrVal);
+    const on = typeof bOrVal === 'string' ? ((x.dataset.v ?? x.dataset.a) === bOrVal) : (x === bOrVal);
     x.setAttribute('aria-pressed', String(on));
   });
 }
@@ -1424,6 +1533,8 @@ function openViewer(fdi, view) {
   dlg.classList.toggle('is-fac', isFac);
   document.getElementById('v-num').textContent = fdi;
   document.getElementById('v-name').textContent = ty.name;
+  document.getElementById('vb-num').textContent = fdi;
+  document.getElementById('vb-name').textContent = ty.name;
   const specs = document.getElementById('v-specs');
   specs.innerHTML = '';
   let rows;
@@ -1483,7 +1594,7 @@ function openViewer(fdi, view) {
   if (isFac) META.fac.types[t0.key].tech.forEach(n => el('li', { text: n }, tech));
   techWrap.hidden = !isFac;
   applyToggles();
-  if (!dlg.open) { try { dlg.showModal(); } catch (e) { dlg.setAttribute('open', ''); } }
+  if (!dlg.open) { try { dlg.showModal(); } catch (e) { dlg.setAttribute('open', ''); } dlg.focus({ preventScroll: true }); }
   dlg.scrollTop = 0;
 }
 function applyToggles() {
@@ -1505,7 +1616,31 @@ document.getElementById('v-prev').addEventListener('click', () => step(-1));
 document.getElementById('v-next').addEventListener('click', () => step(1));
 document.getElementById('t-marks').addEventListener('change', e => { prefs.marks = e.target.checked; savePrefs(); applyToggles(); });
 document.getElementById('t-schema').addEventListener('change', e => { prefs.schema = e.target.checked; savePrefs(); applyToggles(); });
-wireSeg('vview', b => openViewer(current, b.dataset.v));
+wireSeg('vview', b => {
+  if (b.dataset.v === '3d') { setSeg('vview', currentView); const f = current; dlg.close(); V3.open(f); return; }
+  openViewer(current, b.dataset.v);
+});
+document.getElementById('vb-prev').addEventListener('click', () => step(-1));
+document.getElementById('vb-next').addEventListener('click', () => step(1));
+const isPhone = () => window.matchMedia('(max-width: 600px)').matches;
+function setArch(a) {
+  document.body.dataset.arch = a;
+  setSeg('archsw', a);
+  try { localStorage.setItem('atlante-arch', a); } catch (e) {}
+}
+document.getElementById('archsw').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (b) setArch(b.dataset.a);
+});
+{
+  let a = 'sup';
+  try { a = localStorage.getItem('atlante-arch') || 'sup'; } catch (e) {}
+  setArch(a === 'inf' ? 'inf' : 'sup');
+  if (isPhone()) {
+    document.getElementById('about').open = false;
+    document.getElementById('v-anat-d').open = false;
+    document.getElementById('v-tech-wrap').open = false;
+  }
+}
 dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
 document.addEventListener('keydown', e => {
   if (!dlg.open) return;

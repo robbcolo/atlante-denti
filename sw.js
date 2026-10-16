@@ -1,5 +1,5 @@
 /* Atlante denti — service worker: everything is cached at install, so the app works offline. */
-const CACHE = 'atlante-1.0.0';
+const CACHE = 'atlante-1.1.0';
 const FILES = [
 "./",
 "fonts/archivo-latin-ext-wdth-normal.woff2",

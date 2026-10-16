@@ -15,4 +15,4 @@ Quando viene pubblicata una nuova versione, l'app mostra "Nuova versione disponi
 ## Contenuti e licenze
 Modelli e rendering: generati proceduralmente, valori medi da Wheeler's Dental Anatomy (Nelson, 11ª ed.).
 three.js r128 (MIT, vedi `vendor/three-LICENSE.txt`). Font Archivo, Source Sans 3, IBM Plex Mono (SIL OFL, vedi `fonts/`).
-Versione 1.0.0.
+Versione 1.1.0.
